@@ -1,12 +1,19 @@
 
 {
-  "name": "Constancias ENTOM",
+  "name": "Constancia ENTOM",
   "short_name": "ENTOM",
-  "start_url": "prueba27.html",
+  "start_url": "index.html",
+  "scope": "./",
   "display": "standalone",
-  "theme_color": "#1459ff",
   "background_color": "#ffffff",
+  "theme_color": "#1459ff",
   "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
     {
       "src": "logo.png",
       "sizes": "192x192",
