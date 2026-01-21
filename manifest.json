@@ -1,0 +1,21 @@
+
+{
+  "name": "Constancias ENTOM",
+  "short_name": "ENTOM",
+  "start_url": "prueba27.html",
+  "display": "standalone",
+  "theme_color": "#1459ff",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
