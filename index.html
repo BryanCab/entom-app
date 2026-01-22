@@ -164,73 +164,1114 @@ canvas[data-sig]{ display:block; width:100%; height:auto; }
 }
 
 
-/* =========================
-   MODO TARJETAS EN MÓVIL
-   ========================= */
+/* === RESPONSIVE: tabla de productos en móviles === */
 @media (max-width: 820px) {
 
-  /* Oculta encabezados de la tabla */
+  /* Ocultar encabezado */
   .table__head {
     display: none !important;
   }
 
-  /* Las filas se vuelven tarjetas */
-  .table__body .table__row {
-    display: block !important;
-    background: var(--bg);
-    padding: 14px;
-    border-radius: 12px;
+  /* Cada fila se vuelve tipo tarjeta */
+  .table__row {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    padding: 12px !important;
     border: 1px solid var(--border);
-    margin-bottom: 14px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    background: var(--surface);
   }
 
-  /* Cada campo ocupa ancho completo */
-  .table__body .table__row > * {
-    display: block !important;
-    width: 100% !important;
-    margin: 10px 0 !important;
+  /* Campos dentro de la fila */
+  .table__row > * {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
 
-  /* Etiqueta generada por JS */
-  .mpr-label {
-    font-size: .9rem;
-    font-weight: 600;
+  /* Etiquetas automáticas */
+  .table__row input[name="item_prod"]::before { content: "Producto"; }
+  .table__row input[name="item_cant"]::before { content: "Cantidad"; }
+  .table__row input[name="item_lts"]::before { content: "Lts"; }
+  .table__row select[name="item_metodo"]::before { content: "Método"; }
+  .table__row input[name="item_dosis"]::before { content: "Dosis"; }
+  .table__row input[name="item_lugar"]::before { content: "Lugar de aplicación"; }
+
+  /* Para que los labels aparezcan */
+  .table__row input,
+  .table__row select {
+    position: relative;
+    padding-top: 22px !important;
+  }
+
+  .table__row input::before,
+  .table__row select::before {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    font-size: 0.78rem;
     color: var(--muted);
-    margin-bottom: 4px;
   }
 
-  /* Inputs cómodos en móvil y sin zoom iOS */
-  .table__body input,
-  .table__body select {
-    width: 100% !important;
-    padding: 10px 14px !important;
-    font-size: 16px !important; /* evita zoom iOS */
-  }
-
-  /* Caja de acciones */
-  .mpr__actions {
-    display: flex !important;
+  /* Botones alineados al final */
+  .table__row div[style*="display:flex"] {
+    flex-direction: row;
     justify-content: flex-end;
-    gap: 10px;
-    margin-top: 12px;
+    margin-top: 10px;
+  }
+}
+
+
+/* === CENTRAR todo el contenido en la tabla del PDF === */
+#p_items th,
+#p_items td {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+
+
+/* === PDF: permitir múltiples líneas en la columna Lugar === */
+
+/* PDF: permitir múltiples líneas en la columna Lugar */
+#p_items th:nth-child(6),
+#p_items td:nth-child(6) {
+  white-space: normal !important;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Alineación de Producto y Lugar a la izquierda (opcional) */
+#p_items th:nth-child(1),
+#p_items td:nth-child(1),
+#p_items th:nth-child(6),
+#p_items td:nth-child(6) {
+  text-align: left !important;
+}
+
+
+/* Opcional: compactar un poco la primera fila de “Cliente” del PDF (los 4 primeros bloques) */
+#printSheet .ps-vl-grid > .ps-vl:nth-child(-n+4) .val {
+  font-size: 9pt;   /* más compacto */
+}
+
+/* (si quieres también reducir el label) */
+#printSheet .ps-vl-grid > .ps-vl:nth-child(-n+4) .lbl {
+  font-size: 8.7pt;
+  opacity: .95;
+}
+
+
+
+/* ====== PDF Header Moderno ====== */
+.ps-header--modern {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 3mm;
+  border: 1px solid #444; /* mantiene marco ps-box */
+  padding: 3mm 3.2mm;
+}
+
+/* Lado izquierdo: título + subtítulo */
+.ps-header__left .ps-title {
+  font-weight: 900;
+  font-size: 13pt;
+  line-height: 1.05;
+  margin: 0;
+}
+.ps-header__left .ps-sub {
+  color: #333;
+  font-size: 9.5pt;
+  margin-top: 0.6mm;
+}
+
+/* Lado derecho: chips con folio y fecha */
+.ps-header__right {
+  display: flex;
+  gap: 2.4mm;
+  align-items: center;
+  flex-wrap: wrap;            /* si no cabe, baja a la siguiente línea */
+  justify-content: flex-end;
+}
+
+.ps-chip {
+  display: grid;
+  grid-auto-flow: row;
+  gap: 0.6mm;
+  padding: 1.8mm 2.4mm;
+  border: 1px solid #444;
+  border-radius: 3.2mm;
+  background: #fff;
+  min-width: 28mm;            /* tamaño mínimo bonito */
+  text-align: center;
+}
+
+.ps-chip__label {
+  font-size: 8.6pt;
+  color: #333;
+}
+
+.ps-chip__value {
+  font-weight: 800;
+  font-size: 10.5pt;
+  line-height: 1;
+  padding-bottom: 0.3mm;
+  border-bottom: 1px solid #999; /* guiño al subrayado, pero corto */
+}
+
+/* Ajustes finos en impresión */
+@media print {
+  .ps-header--modern {
+    /* Forzar que no “pegue” tanto al borde superior de la hoja */
+    margin-top: 0.5mm;
+  }
+}
+
+
+/* === Bloque de cliente modernizado === */
+.ps-clientbox {
+  padding: 3mm;
+  border: 1px solid #444;
+  border-radius: 3mm;
+  display: grid;
+  gap: 2mm;
+}
+
+.ps-clientrow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2mm;
+}
+
+.ps-item {
+  border: 1px solid #999;
+  border-radius: 2.5mm;
+  padding: 1.5mm 2mm;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8mm;
+}
+
+.ps-item__label {
+  font-size: 8pt;
+  color: #444;
+}
+
+.ps-item__value {
+  font-size: 10pt;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #000;
+  word-break: break-word;
+}
+
+@media print {
+  .ps-clientbox {
+    margin-top: 2mm;
+  }
+}
+
+/* Si hay solo 3 columnas en la segunda fila, ajusta a 3 */
+.ps-clientrow:nth-child(2) {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+
+/* === Bloque moderno de Actividades / Tratamiento === */
+
+.ps-atr-modern {
+  padding: 3mm;
+  border-radius: 3mm;
+  display: grid;
+  gap: 3mm;
+}
+
+/* Secciones */
+.ps-section {
+  display: grid;
+  gap: 1.2mm;
+}
+
+.ps-section__title {
+  font-size: 9pt;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 0.5mm;
+}
+
+/* Chips ligeros ("píldoras") */
+.ps-pillwrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.6mm;
+}
+
+.ps-pillwrap .ps-tag,
+.ps-treatment .ps-tag {
+  background: #eaeefc;                   /* pastel suave */
+  color: #333;
+  border-radius: 2mm;
+  padding: 0.9mm 2mm;
+  font-size: 8pt;
+  border: 1px solid #c7cce9;
+}
+
+/* TRATAMIENTO */
+.ps-treatment {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.6mm;
+}
+
+/* DETALLES */
+.ps-grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2mm;
+}
+
+.ps-detail {
+  border: 1px solid #aaa;
+  border-radius: 2mm;
+  padding: 1.6mm;
+  background: #fff;
+  display: grid;
+  gap: 1mm;
+}
+
+.ps-detail__label {
+  font-size: 8pt;
+  color: #555;
+}
+
+.ps-detail__value {
+  font-size: 10pt;
+  font-weight: 700;
+  color: #000;
+}
+
+/* Opcional: cuando es impresión */
+@media print {
+  .ps-atr-modern {
+    margin-top: 2mm;
+  }
+}
+
+
+/* === Grid de dos columnas para Actividades y Tratamiento === */
+.ps-atr-columns {
+  padding: 2mm 2mm 2.5mm;
+  border-radius: 2.5mm;
+  display: grid;
+  gap: 2mm;
+}
+
+.ps-atr-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3mm;
+}
+
+/* columna */
+.ps-atr-col {
+  display: grid;
+  gap: 1mm;
+}
+
+/* título pequeño */
+.ps-section__title {
+  font-size: 8.5pt;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 0.2mm;
+}
+
+/* chips compactos */
+.ps-pillwrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2mm;
+}
+
+.ps-pillwrap .ps-tag {
+  background: #eaeefc;
+  color: #222;
+  padding: 0.6mm 1.6mm;
+  border: 1px solid #c7cce9;
+  border-radius: 1.8mm;
+  font-size: 7.6pt;
+  line-height: 1.1;
+}
+
+/* DETALLES – más compactos */
+.ps-grid2.small {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2mm;
+}
+
+.ps-detail {
+  border: 1px solid #aaa;
+  border-radius: 2mm;
+  padding: 1.2mm;
+  background: #fff;
+  display: grid;
+  gap: 0.6mm;
+}
+
+.ps-detail__label {
+  font-size: 7.5pt;
+  color: #666;
+}
+
+.ps-detail__value {
+  font-size: 9.2pt;
+  font-weight: 700;
+  color: #000;
+  line-height: 1.1;
+}
+
+@media print {
+  .ps-atr-columns { margin-top: 1mm; }
+}
+
+
+/* === DETALLES: 2 filas de 3 columnas (compacto para 1 hoja) === */
+
+
+/* === DETALLES: 2 filas de 3 columnas (compacto para 1 hoja) === */
+
+/* === DETALLES: 2 filas de 3 columnas (compacto para 1 hoja) === */
+.ps-grid3.small {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.8mm;
+  margin-top: 1mm;
+}
+
+.ps-detail {
+  border: 1px solid #aaa;
+  border-radius: 2mm;
+  padding: 1mm 1.2mm;
+  background: #fff;
+  display: grid;
+  gap: 0.5mm;
+  min-height: 14mm;
+}
+
+.ps-detail__label {
+  font-size: 7.2pt;
+  color: #666;
+  line-height: 1.1;
+}
+
+.ps-detail__value {
+  font-size: 9pt;
+  font-weight: 700;
+  color: #000;
+  line-height: 1.05;
+  word-break: break-word;
+}
+
+@media print {
+  .ps-grid3.small { gap: 1.6mm; }
+  .ps-detail { min-height: 12.5mm; }
+}
+
+
+/* Afinar el bloque general para que respire menos */
+.ps-atr-columns {
+  padding: 1.6mm 1.8mm 2mm;
+  gap: 1.8mm;
+}
+
+.ps-atr-grid {
+  gap: 2.2mm;
+}
+
+.ps-section__title {
+  font-size: 8pt;              /* título más compacto */
+  margin-bottom: 0;
+}
+
+.ps-pillwrap {
+  gap: 1mm;
+}
+.ps-pillwrap .ps-tag {
+  padding: 0.5mm 1.4mm;        /* chip más pequeño */
+  font-size: 7.2pt;
+  border-radius: 1.6mm;
+}
+
+
+/* ====== AJUSTE +5% DE TAMAÑO GLOBAL PARA TARJETAS Y CHIPS EN PDF ====== */
+
+/* 1) Tarjetas de CLIENTE */
+.ps-clientbox { padding: 2.35mm; border-radius: 2.3mm; gap: 1.6mm; }
+.ps-clientrow { gap: 1.6mm; }
+.ps-item      { padding: 1.15mm 1.6mm; border-radius: 2mm; }
+.ps-item__label { font-size: 6.3pt; }  
+.ps-item__value { font-size: 7.9pt; }
+
+/* 2) Actividades / Tratamiento */
+.ps-atr-columns { padding: 1.25mm 1.45mm 1.55mm; gap: 1.45mm; }
+.ps-atr-grid    { gap: 1.7mm; }
+.ps-atr-col     { gap: 0.75mm; }
+.ps-section__title { font-size: 6.7pt; }
+
+/* Chips */
+.ps-pillwrap { gap: 0.8mm; }
+.ps-pillwrap .ps-tag {
+  padding: 0.42mm 1.15mm;
+  font-size: 5.9pt;
+  border-radius: 1.25mm;
+}
+
+/* 3) DETALLES (6 tarjetas) */
+.ps-grid3.small { gap: 1.25mm; margin-top: 0.65mm; }
+.ps-detail {
+  padding: 0.85mm 0.95mm;
+  border-radius: 1.55mm;
+  min-height: 11mm;
+  gap: 0.38mm;
+}
+.ps-detail__label { font-size: 5.9pt; }
+.ps-detail__value { font-size: 7.2pt; }
+
+/* 4) Header moderno (folio/fecha) */
+.ps-header--modern { padding: 2.3mm 2.5mm; gap: 2.3mm; }
+.ps-header__left .ps-title { font-size: 10.3pt; }
+.ps-header__left .ps-sub   { font-size: 7.5pt; }
+.ps-header__right { gap: 1.7mm; }
+.ps-chip {
+  padding: 1.25mm 1.75mm;
+  border-radius: 2.5mm;
+  min-width: 22mm;
+}
+.ps-chip__label { font-size: 6.9pt; }
+.ps-chip__value { font-size: 8.3pt; }
+
+/* 5) Tabla de productos ligeramente más grande */
+.ps-table th, .ps-table td { font-size: 8.4pt; padding: 0.75mm; }
+
+/* 6) Ajuste extra en impresión */
+@media print {
+  .ps-detail { min-height: 10.2mm; }
+  .ps-grid3.small { gap: 1.1mm; }
+  .ps-clientbox { padding: 2.2mm; }
+}
+
+
+/* +5% de tamaño SOLO para los textos de los chips de Actividades y Tratamiento */
+.ps-pillwrap .ps-tag,
+#p_acts .ps-tag,
+#p_trat .ps-tag {
+    font-size: 6.2pt !important;   /* antes 5.9pt */
+}
+
+
+/* Logo en header PDF (sin fondo) */
+.ps-header__left {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  gap: 2.2mm; /* espacio entre logo y textos */
+}
+
+.ps-logo {
+  width: 11mm;              /* tamaño sugerido en carta */
+  height: 11mm;
+  object-fit: contain;       /* ajusta sin recortar */
+  display: block;
+  border-radius: 2mm;        /* opcional: ligeramente redondeado */
+  background: transparent;   /* sin fondo */
+  border: none;              /* sin borde */
+}
+
+/* Ajuste fino de títulos junto al logo */
+.ps-header__left .ps-title {
+  margin: 0;
+}
+.ps-header__left .ps-sub {
+  margin: 0.4mm 0 0 0;
+}
+
+
+/* === Logo en header del PDF (sin fondo) === */
+.ps-header__left {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  gap: 2.2mm;              /* separación entre logo y textos */
+}
+
+.ps-logo {
+  width: 11mm;             /* ajusta a 9–12mm si quieres */
+  height: 11mm;
+  object-fit: contain;     /* no recorta el logo */
+  display: block;
+  background: transparent; /* sin fondo */
+  border: none;
+  box-shadow: none;
+}
+
+/* asegura que el bloque de textos junto al logo no se deforme */
+.ps-header__brand .ps-title { margin: 0; }
+.ps-header__brand .ps-sub   { margin: 0.4mm 0 0 0; }
+
+
+.ps-header_left img {
+    width: 28px;      /* AJUSTA EL TAMAÑO */
+    height: 28px;     /* AJUSTA EL TAMAÑO */
+    object-fit: contain;
+    display: block;
+}
+
+
+/* === Header PDF: texto pegado al logo en la izquierda === */
+
+/* 1) Que el header tenga 3 columnas: [logo+texto] [espacio flexible] [chips] */
+.ps-header--modern {
+  grid-template-columns: auto 1fr auto !important;
+}
+
+/* 2) El bloque izquierdo ya NO se estira: logo + texto en columnas, pegados */
+.ps-header__left {
+  display: grid !important;
+  grid-template-columns: auto auto !important;  /* [logo][texto] */
+  align-items: center !important;
+  column-gap: 1mm !important;                   /* separación mínima */
+  justify-content: start !important;
+}
+
+/* 3) Quita márgenes del bloque de textos para que queden pegados al logo */
+.ps-header__brand { margin: 0 !important; }
+
+/* 4) Ajuste fino de márgenes internos de título/subtítulo (sin afectar tamaños) */
+.ps-header__brand .ps-title { margin: 0 !important; }
+.ps-header__brand .ps-sub   { margin: 0.2mm 0 0 0 !important; }
+
+/* 5) (Opcional) Si quieres aún más pegado, baja el gap a 0.6mm o 0.4mm */
+
+
+
+/* === PDF: Tabla Productos con zebra azul + header gris combinando === */
+
+/* Header gris frío que combina con #CCD1EB */
+#p_items thead th {
+  background: #E6E7EC !important;   /* Gris suave que combina perfecto */
+}
+
+
+
+/* Asegurar que los colores sí aparezcan en el PDF */
+@media print {
+  #p_items thead th,
+  #p_items tbody td {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+
+/* ====== Look tipo “bloques superiores” para Mezcla + Información + Métricas ====== */
+
+/* === Bloques de datos (Litros, Metros, Hora...) === */
+#p_print .ps-mi-grid > div,
+.ps-mi-grid > div {
+  border: 1px solid #C8CBD4;      /* borde igual al bloque superior */
+  background: #FFFFFF;            /* igual que cliente / técnico */
+  padding: 1.6mm 1.9mm;
+  border-radius: 2mm;             /* mismo radio del top */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5mm;
+}
+
+.ps-mi-head {
+  font-size: 7.2pt;
+  color: #555;
+  font-weight: 700;               /* mismas etiquetas del bloque cliente */
+}
+
+.ps-uline {
+  border: none !important;        /* quitamos la línea anterior */
+  font-size: 9pt;
+  font-weight: 700;
+  color: #000;
+  padding: 0;
+  line-height: 1.1;
+}
+
+/* === Caja de Información (texto largo) === */
+.ps-info-row {
+  margin-top: 2mm;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2mm;
+  align-items: center;
+}
+
+.ps-info-title {
+  font-size: 7.2pt;
+  font-weight: 700;
+  color: #444;
+}
+
+.ps-info-text {
+  border: 1px solid #C8CBD4;
+  background: #FFFFFF;
+  border-radius: 2mm; 
+  padding: 1.4mm 1.8mm;
+  min-height: 8mm;
+  line-height: 1.2;
+  font-size: 9pt;
+}
+
+/* === Métricas === */
+.ps-metrics {
+  margin-top: 2mm;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2mm;
+}
+
+.ps-mchip {
+  border: 1px solid #C8CBD4;
+  background: #FFFFFF;
+  border-radius: 2mm;
+  padding: 1.8mm 1.6mm;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  gap: 0.6mm;
+}
+
+.ps-mchip__label {
+  font-size: 7.2pt;
+  color: #555;
+  font-weight: 700;
+}
+
+.ps-mchip__val {
+  font-size: 9.2pt;
+  font-weight: 800;
+  color: #000;
+}
+
+/* Ajuste para impresión */
+@media print {
+  .ps-mi-grid > div,
+  .ps-mchip,
+  .ps-info-text {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+
+
+/* ===== Ajuste: todo centrado + menos negrita ===== */
+
+/* 1) Tarjetas de Mezcla (Litros/Metros/Horas/etc.) */
+.ps-mi-grid > div{
+  text-align: center;          /* centra todo dentro */
+  align-items: center;         /* centra horizontal en flex */
+}
+
+/* Etiquetas (Litros, Metros, etc.) menos pesadas */
+.ps-mi-head{
+  font-weight: 600;            /* antes 700 */
+  color: #555;
+}
+
+/* Valores (los que estaban como línea) menos pesados */
+.ps-uline{
+  font-weight: 700;            /* antes 700/800 en algunos casos */
+  text-align: center;
+}
+
+/* 2) Información (título y texto centrados) */
+.ps-info-row{
+  justify-items: center;       /* centra las dos columnas */
+}
+
+.ps-info-title{
+  font-weight: 600;            /* antes 700 */
+  text-align: center;
+}
+
+.ps-info-text{
+  text-align: center;          /* centra el párrafo */
+  font-weight: 500;            /* texto normal, no pesado */
+}
+
+/* 3) Métricas (KM, TT, Aux) centradas y menos bold */
+.ps-mchip{
+  align-items: center;
+  text-align: center;
+}
+
+.ps-mchip__label{
+  font-weight: 600;            /* antes 700 */
+  color: #555;
+}
+
+.ps-mchip__val{
+  font-weight: 700;            /* antes 800 */
+}
+
+
+/* === INFORMACIÓN convertida en tarjeta completa === */
+
+.ps-info-row {
+  display: block !important;      /* ya no son 2 columnas */
+  margin-top: 2mm;
+}
+
+.ps-info-title {
+  display: block;
+  font-size: 7.2pt;
+  font-weight: 600;
+  color: #444;                    /* gris suave */
+  margin-bottom: 1mm;
+  text-align: left;               /* NO centrado */
+}
+
+.ps-info-text {
+  border: 1px solid #C8CBD4;      /* mismo borde de tarjetas superiores */
+  background: #F7F8FA;            /* gris MUY tenue y elegante */
+  border-radius: 2mm;
+  padding: 1.8mm 2mm;
+  line-height: 1.25;
+  font-size: 8.8pt;
+  font-weight: 500;               /* menos negrita */
+  color: #555;                    /* gris discreto */
+  text-align: left;               /* alineado izquierda */
+}
+
+
+/* === INFORMACIÓN: título en negrita === */
+.ps-info-title {
+  font-weight: 700 !important;   /* antes 600 – ahora sí en negrita */
+  color: #333;                   /* un toque más oscuro que el texto normal */
+  margin-bottom: 1mm;
+}
+
+/* === TARJETA DE INFORMACIÓN (sin cambios adicionales) === */
+.ps-info-text {
+  background: #F7F8FA;
+  border: 1px solid #C8CBD4;
+  border-radius: 2mm;
+  padding: 1.8mm 2mm;
+  font-size: 8.8pt;
+  font-weight: 500;
+  color: #555;
+  line-height: 1.25;
+  text-align: left;
+}
+
+/* === MÉTRICAS DE VISITA: reducir tamaño 20% === */
+
+/* Contenedor de métricas */
+.ps-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2mm;
+  margin-top: 2mm;
+}
+
+/* Tarjetitas más pequeñas */
+.ps-mchip {
+  transform: scale(0.80);            /* 20% más pequeñas */
+  transform-origin: top center;      /* que no afecte la alineación */
+  
+  border: 1px solid #C8CBD4;
+  background: #FFFFFF;
+  border-radius: 2mm;
+  padding: 1.6mm 1.4mm;              /* leve ajuste para armonía */
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4mm;
+}
+
+/* Label más suave */
+.ps-mchip__label {
+  font-weight: 600;
+  font-size: 6.9pt;
+  color: #555;
+}
+
+/* Valor un poco menos bold */
+.ps-mchip__val {
+  font-weight: 700;                  /* antes 800 */
+  font-size: 8.5pt;
+  color: #000;
+}
+
+
+/* =========================================================
+   PDF: Medidas de precaución — look tarjetas (borde + fuentes)
+   ========================================================= */
+
+/* 1) Fuente pro para todo el bloque de precauciones */
+#printSheet .ps-box:has(> div > div > div > p) {
+  font-family: "Segoe UI", Calibri, Arial, system-ui, -apple-system, sans-serif;
+}
+
+/* 2) El contenedor general del bloque (la caja grande donde están las 3 tarjetas) */
+#printSheet .ps-box:has(div[style*="grid-template-columns: 1fr 1fr 1fr"]) {
+  border-color: #C8CBD4 !important;
+  border-radius: 2mm !important;
+}
+
+/* 3) La grilla de 3 columnas: respira igual que tus tarjetas */
+#printSheet .ps-box div[style*="grid-template-columns: 1fr 1fr 1fr"]{
+  gap: 2mm !important;
+}
+
+/* 4) Cada tarjeta individual (las 3) */
+#printSheet .ps-box div[style*="grid-template-columns: 1fr 1fr 1fr"] > div{
+  border: 1px solid #C8CBD4 !important;
+  border-radius: 2mm !important;
+  background: #FFFFFF !important;
+  padding: 1.6mm 1.9mm !important;
+  box-shadow: none !important;
+}
+
+/* 5) Título dentro de cada tarjeta (hoy viene como <div style="font-weight:800..."> ) */
+#printSheet .ps-box div[style*="grid-template-columns: 1fr 1fr 1fr"] > div > div{
+  font-weight: 700 !important;      /* menos pesado que 800, pero firme */
+  font-size: 8.6pt !important;      /* similar a otros headings del PDF */
+  color: #111 !important;
+  margin: 0 0 1mm 0 !important;
+  letter-spacing: 0.1px !important;
+}
+
+/* 6) Texto (párrafos) más “documento”, menos negro intenso */
+#printSheet .ps-box div[style*="grid-template-columns: 1fr 1fr 1fr"] > div > p{
+  margin: 0 !important;
+  font-size: 8.7pt !important;
+  line-height: 1.25 !important;
+  color: #4B5563 !important;        /* gris suave */
+  font-weight: 500 !important;
+}
+
+/* 7) (Opcional) Si quieres un encabezado del bloque “Medidas de precaución” más pro */
+#printSheet .ps-box > .ps-small[style*="Medidas de precaución"]{
+  font-weight: 700 !important;
+  font-size: 9pt !important;
+  color: #111 !important;
+  letter-spacing: 0.1px !important;
+}
+
+
+
+@media print {
+  #printSheet .ps-box{
+    padding: 1.2mm !important;       /* antes ~2mm */
+    margin-bottom: 1.2mm !important; /* antes ~2mm */
+  }
+}
+
+
+@media print, screen {
+  #printSheet .ps-box:has(#p_valor),
+  #printSheet .ps-box:has(#p_garantia),
+  #printSheet .ps-box:has(#p_servicios),
+  #printSheet .ps-contact{
+    border: 1px solid #C8CBD4 !important;
+    border-radius: 2mm !important;
+    background: #FFFFFF !important;
+    padding: 1.1mm 1.5mm !important;
+  }
+}
+
+
+/* ====== PDF: Valor / Garantía / Servicios como tarjeta simple ====== */
+@media print, screen {
+  /* El ps-box que contiene la grilla de Valor/Garantía/Servicios */
+  #printSheet .ps-box:has(#p_valor),
+  #printSheet .ps-box:has(#p_garantia),
+  #printSheet .ps-box:has(#p_servicios) {
+    border: 1px solid #C8CBD4 !important;
+    border-radius: 2mm !important;
+    background: #FFFFFF !important;
+    padding: 1.2mm 1.6mm !important;       /* compacto */
+    margin-bottom: 1.2mm !important;
+    font-family: "Segoe UI", Calibri, Arial, system-ui, -apple-system, sans-serif;
+  }
+
+  /* Cada celda (Valor/Garantía/Servicios) */
+  #printSheet #p_valor,
+  #printSheet #p_garantia,
+  #printSheet #p_servicios {
+    font-weight: 600;                       /* pro, no tan negrita */
+    color: #111;
+  }
+
+  /* Etiquetas (Valor/Garantía/Servicios) dentro de .ps-vl */
+  #printSheet .ps-vl .lbl{
+    font-weight: 600 !important;
+    color: #3b4252 !important;              /* gris pro */
+    letter-spacing: 0.1px;
+  }
+
+  /* Valor (dato) con un poco más de presencia */
+  #printSheet .ps-vl .val{
+    font-weight: 700 !important;
+    color: #111 !important;
+  }
+
+  /* Separadores suaves entre columnas (sin “caja dura”) */
+  #printSheet .ps-vl{
+    border-bottom: 0 !important;            /* quitamos línea inferior */
+    border-right: 1px solid #E3E6EE !important;
+    padding: 1.0mm 1.2mm !important;
+  }
+  #printSheet .ps-vl:last-child{
+    border-right: 0 !important;
+  }
+}
+
+
+/* ===== Footer Contacto: 3 columnas usando 12-column grid ===== */
+#printSheet #ps_contact{
+  /* look tarjeta (igual a tu estilo) */
+  border: 1px solid #C8CBD4 !important;
+  border-radius: 2mm !important;
+  background: #FFFFFF !important;
+
+  /* grid 12 columnas */
+  display: grid !important;
+  grid-template-columns: repeat(12, 1fr) !important;
+
+  /* espacio entre “columnas” */
+  column-gap: 4mm !important;
+  row-gap: 1mm !important;
+
+  /* compactito y limpio */
+  padding: 1.2mm 1.6mm !important;
+
+  /* tipografía pro */
+  font-family: "Segoe UI", Calibri, Arial, system-ui, -apple-system, sans-serif;
+  font-size: 8.7pt;        /* no agranda */
+  color: #111 !important;
+
+  /* centra el bloque dentro de la tarjeta */
+  align-items: center;
+}
+
+/* Cada item ocupa 4 columnas (3*4 = 12) y se centra */
+#printSheet #ps_contact .c-item{
+  grid-column: span 4;
+  text-align: center;
+  white-space: nowrap;       /* evita saltos feos */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Negrita suave (no exagerada) */
+#printSheet #ps_contact .c-item strong{
+  font-weight: 600;
+  color: #3b4252;            /* gris pro */
+}
+
+/* “próximamente” discreto */
+#printSheet #ps_contact .c-item em{
+  font-style: normal;
+  color: #667085;            /* gris tenue */
+  font-weight: 500;
+}
+
+/* Responsive print safety: si por algún motivo no cupiera, que baje a 2 filas */
+@media print{
+  #printSheet #ps_contact{
+    column-gap: 3mm !important;
+  }
+}
+
+
+
+/* ===== Footer de contacto (3 columnas flexibles, textos completos) ===== */
+
+#ps_contact{
+  display: grid !important;
+
+  /* 3 columnas reales y flexibles */
+  grid-template-columns: repeat(3, 1fr) !important;
+
+  /* más aire entre columnas */
+  column-gap: 6mm !important;
+
+  /* estilo tarjeta */
+  border: 1px solid #C8CBD4 !important;
+  border-radius: 2mm !important;
+  background: #FFFFFF !important;
+  padding: 1.4mm 1.8mm !important;
+
+  font-family: "Segoe UI", Calibri, Arial, system-ui, sans-serif;
+  font-size: 8.7pt;
+  color: #111;
+  align-items: center;
+}
+
+/* Cada item ocupa 1 columna flexible */
+#ps_contact .c-item{
+  text-align: center;
+
+  /* ❗Permitir que el texto envuelva si lo necesita */
+  white-space: normal !important;
+
+  /* Evitar que se corte */
+  overflow: visible !important;
+  text-overflow: clip !important;
+
+  padding: 0 1mm;
+}
+
+/* Negrita suave */
+#ps_contact .c-item strong{
+  font-weight: 600;
+  color: #333;
+}
+
+/* Texto (próximamente) más discreto */
+#ps_contact .c-item em{
+  color: #777;
+  font-weight: 500;
+  font-style: normal;
+}
+
+
+/* ===== Watermark doble capa (más consistente en toda la hoja) ===== */
+#wm{
+  opacity: 0.30 !important;   /* opacidad base */
+  filter: grayscale(100%) contrast(120%) !important;
+
+  /* 2 capas: una grande + una mediana */
+  background-image:
+    url('logo.png'),
+    url('logo.png');
+  background-repeat: no-repeat, no-repeat;
+  background-position: center, center;
+  background-size: 90%, 55%;
+}
+
+
+@media print{
+  #wm{
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 }
 
 
 </style>
-
-
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js")
-    .then(() => console.log("Service Worker registrado"))
-    .catch(err => console.error("Error al registrar SW:", err));
-}
-</script>
-
-
-
-
 </head>
 <body>
 <main class="page">
@@ -515,105 +1556,146 @@ if ("serviceWorker" in navigator) {
   <section id="printSheet" aria-hidden="true">
     <div id="wm" aria-hidden="true"></div>
     <!-- Encabezado -->
-    <div class="ps-header ps-box">
-      <div>
-        <div class="ps-title">Fumigaciones ENTOM</div>
-        <div class="ps-sub">Constancia de Servicio</div>
+    
+<!-- Header PDF — versión moderna -->
+<div class="ps-header ps-box ps-header--modern">
+      <div class="ps-header__left">
+        <img src="logo.png" alt="" style="width:9mm; height:9mm; max-width:9mm; max-height:9mm; object-fit:contain; display:block;" />
+        <div class="ps-header__brand">
+          <div class="ps-title">Fumigaciones ENTOM</div>
+          <div class="ps-sub">Constancia de Servicio</div>
+        </div>
       </div>
-      <div>
-        <div class="ps-small">Constancia No.</div>
-        <div class="ps-cell" id="p_folio"></div>
-      </div>
-      <div>
-        <div class="ps-small">Fecha</div>
-        <div class="ps-cell" id="p_fecha"></div>
-      </div>
-    </div>
-
-    <!-- Cliente — 3 pares por fila -->
-    <div class="ps-box">
-      <div class="ps-vl-grid">
-        <!-- Fila 1 -->
-        <div class="ps-vl" style="grid-column: span 4;">
-          <span class="lbl">Cliente</span>
-          <span class="val" id="p_cliente">—</span>
+      <div class="ps-header__right">
+        <div class="ps-chip">
+          <span class="ps-chip__label">Constancia No.</span>
+          <span class="ps-chip__value" id="p_folio">123</span>
         </div>
-        <div class="ps-vl" style="grid-column: span 4;">
-          <span class="lbl">N.I.C.</span>
-          <span class="val" id="p_nic">—</span>
-        </div>
-        <div class="ps-vl" style="grid-column: span 4;">
-          <span class="lbl">Teléfono</span>
-          <span class="val" id="p_tel">—</span>
-        </div>
-        <!-- Fila 2 -->
-        <div class="ps-vl" style="grid-column: span 4;">
-          <span class="lbl">Ciudad</span>
-          <span class="val" id="p_ciudad">—</span>
-        </div>
-        <div class="ps-vl" style="grid-column: span 4;">
-          <span class="lbl">Giro</span>
-          <span class="val" id="p_giro">—</span>
-        </div>
-        <div class="ps-vl" style="grid-column: span 4;">
-          <span class="lbl">Dirección</span>
-          <span class="val" id="p_dir">—</span>
+        <div class="ps-chip">
+          <span class="ps-chip__label">Fecha</span>
+          <span class="ps-chip__value" id="p_fecha">2026-01-24</span>
         </div>
       </div>
     </div>
 
-    <!-- Actividades / Tratamiento / Detalles -->
-    <div class="ps-box">
-      <div style="margin-bottom:1mm;">
-        <div class="ps-small" style="margin-bottom:.6mm;">Actividades realizadas</div>
-        <div id="p_acts" class="ps-small"></div>
-      </div>
-      <div style="margin-bottom:1mm;">
-        <div class="ps-small" style="margin-bottom:.6mm;">Tratamiento</div>
-        <div class="ps-cell" id="p_trat"></div>
-      </div>
-      <div class="ps-vl-grid">
-        <div class="ps-vl" style="grid-column: span 4;">
-          <span class="lbl">Grado de infestación</span>
-          <span class="val" id="p_infest">—</span>
-        </div>
-        <div class="ps-vl" style="grid-column: span 8;">
-          <span class="lbl">Localización</span>
-          <span class="val" id="p_local">—</span>
-        </div>
-        <div class="ps-vl" style="grid-column: span 6;">
-          <span class="lbl">Actividad de plagas</span>
-          <span class="val" id="p_actividad">—</span>
-        </div>
-        <div class="ps-vl" style="grid-column: span 6;">
-          <span class="lbl">Riesgo de contaminación</span>
-          <span class="val" id="p_riesgo">—</span>
-        </div>
-        <div class="ps-vl" style="grid-column: span 6;">
-          <span class="lbl">Roedores (Inst./Rev.)</span>
-          <span class="val" id="p_roedores">—</span>
-        </div>
-        <div class="ps-vl" style="grid-column: span 6;">
-          <span class="lbl">ULV (Inst./Rev.)</span>
-          <span class="val" id="p_ulv">—</span>
-        </div>
-      </div>
+
+    
+<!-- Cliente — 4 pares en la primera fila -->
+  
+<!-- Datos del cliente — versión moderna -->
+<div class="ps-box ps-clientbox">
+  
+  <div class="ps-clientrow">
+    <div class="ps-item">
+      <span class="ps-item__label">Cliente</span>
+      <span class="ps-item__value" id="p_cliente">—</span>
     </div>
+    <div class="ps-item">
+      <span class="ps-item__label">N.I.C.</span>
+      <span class="ps-item__value" id="p_nic">—</span>
+    </div>
+    <div class="ps-item">
+      <span class="ps-item__label">Teléfono</span>
+      <span class="ps-item__value" id="p_tel">—</span>
+    </div>
+    <div class="ps-item">
+      <span class="ps-item__label">Técnico</span>
+      <span class="ps-item__value" id="p_tecnico">—</span>
+    </div>
+  </div>
+
+  <div class="ps-clientrow">
+    <div class="ps-item">
+      <span class="ps-item__label">Ciudad</span>
+      <span class="ps-item__value" id="p_ciudad">—</span>
+    </div>
+    <div class="ps-item">
+      <span class="ps-item__label">Giro</span>
+      <span class="ps-item__value" id="p_giro">—</span>
+    </div>
+    <div class="ps-item">
+      <span class="ps-item__label">Dirección</span>
+      <span class="ps-item__value" id="p_dir">—</span>
+    </div>
+  </div>
+
+</div>
+
+
+      
+
+<!-- Bloque Moderno Compacto: Actividades / Tratamiento / Detalles -->
+<div class="ps-box ps-atr-columns">
+
+  <div class="ps-atr-grid">
+
+    <!-- COLUMNA 1 – ACTIVIDADES -->
+    <div class="ps-atr-col">
+      <div class="ps-section__title">Actividades realizadas</div>
+      <div class="ps-pillwrap" id="p_acts"></div>
+    </div>
+
+    <!-- COLUMNA 2 – TRATAMIENTO -->
+    <div class="ps-atr-col">
+      <div class="ps-section__title">Tratamiento</div>
+      <div class="ps-pillwrap" id="p_trat"></div>
+    </div>
+
+  </div>
+
+  <!-- DETALLES – SIGUEN ABAJO COMO TARJETAS PERO MAS COMPACTAS -->
+  
+<!-- DETALLES — 2 filas de 3 columnas (3 + 3) -->
+<div class="ps-grid3 small">
+  <div class="ps-detail">
+    <span class="ps-detail__label">Grado de infestación</span>
+    <span class="ps-detail__value" id="p_infest">—</span>
+  </div>
+  <div class="ps-detail">
+    <span class="ps-detail__label">Localización</span>
+    <span class="ps-detail__value" id="p_local">—</span>
+  </div>
+  <div class="ps-detail">
+    <span class="ps-detail__label">Actividad de plagas</span>
+    <span class="ps-detail__value" id="p_actividad">—</span>
+  </div>
+  <div class="ps-detail">
+    <span class="ps-detail__label">Riesgo de contaminación</span>
+    <span class="ps-detail__value" id="p_riesgo">—</span>
+  </div>
+  <div class="ps-detail">
+    <span class="ps-detail__label">Roedores (Inst./Rev.)</span>
+    <span class="ps-detail__value" id="p_roedores">—</span>
+  </div>
+  <div class="ps-detail">
+    <span class="ps-detail__label">ULV (Inst./Rev.)</span>
+    <span class="ps-detail__value" id="p_ulv">—</span>
+  </div>
+</div>
+
+
+</div>
+
+    
+
+
 
     <!-- Productos -->
     <div class="ps-box">
       <div class="ps-small" style="margin-bottom:1mm;">Productos, Dosis y Métodos usados</div>
-      <table class="ps-table" id="p_items">
+      
+        <table class="ps-table" id="p_items">
         <thead>
-          <tr>
-            <th style="width:36%;">Producto</th>
-            <th style="width:8%;">Cant.</th>
-            <th style="width:8%;">Lts</th>
-            <th style="width:14%;">Método</th>
-            <th style="width:14%;">Dosis</th>
-            <th style="width:20%;">Lugar</th>
-          </tr>
+        <tr>
+            <th style="width:13%;">Producto</th>      <!-- suficiente para 12 caracteres -->
+            <th style="width:6%;">Cant.</th>         <!-- valores pequeños (1–3 dígitos) -->
+            <th style="width:6%;">Lts</th>           <!-- valores pequeños -->
+            <th style="width:6%;">Método</th>       <!-- 1-2 letras -->
+            <th style="width:6%;">Dosis</th>        <!-- valores cortos -->
+            <th style="width:63%;">Lugar</th>        <!-- la celda con más texto -->
+        </tr>
         </thead>
+
         <tbody id="p_items_body"></tbody>
       </table>
       <div id="p_items_note" class="ps-small" style="margin-top:1.2mm; color:#444;"></div>
@@ -627,7 +1709,7 @@ if ("serviceWorker" in navigator) {
 
     <!-- Mezcla e Información -->
     <div class="ps-box">
-      <div class="ps-mi-grid">
+      <div class="ps-mi-grid" id="ps_mix_block">
         <div><div class="ps-mi-head">Litros</div><div class="ps-uline" id="p_mez_litros">—</div></div>
         <div><div class="ps-mi-head">Metros</div><div class="ps-uline" id="p_mez_metros">—</div></div>
         <div><div class="ps-mi-head">Hora inicial</div><div class="ps-uline" id="p_mez_inicial">—</div></div>
@@ -642,7 +1724,7 @@ if ("serviceWorker" in navigator) {
         </div>
       </div>
       <div class="ps-metrics-wrap">
-        <div class="ps-metrics-title">Métricas de visita</div>
+        <!-- <div class="ps-metrics-title">Métricas de visita</div> -->
         <div class="ps-metrics">
           <div class="ps-mchip">
             <span class="ps-mchip__label">KM</span>
@@ -676,7 +1758,7 @@ if ("serviceWorker" in navigator) {
 
     <!-- Tres notas fijas -->
     <div class="ps-box">
-      <div class="ps-small" style="margin-bottom:1.2mm;">Medidas de precaución</div>
+      <!-- <div class="ps-small" style="margin-bottom:1.2mm;">Medidas de precaución</div> -->
       <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:2mm;">
         <div style="border:1px solid #444; background:#fff; padding:1.2mm 1.4mm;">
           <div style="font-weight:800; font-size:9.3pt; margin:0 0 1mm 0;">Medidas de precaución</div>
@@ -722,7 +1804,13 @@ if ("serviceWorker" in navigator) {
     </div>
 
     <!-- Contacto -->
-    <div class="ps-box ps-contact">Contacto: 753 539 67 49 · Email: entom@gmail.com</div>
+   
+<div class="ps-box ps-contact" id="ps_contact">
+  <span class="c-item"><strong>Contacto:</strong> 753 539 67 49</span>
+  <span class="c-item"><strong>Email:</strong> entom@gmail.com</span>
+  <span class="c-item"><strong>Web:</strong> fumigaciones-entom.com <em>(próximamente)</em></span>
+</div>
+
   </section>
 </main>
 
@@ -871,6 +1959,7 @@ function safePopulatePrintSheet(){
  $('#p_cliente') && ($('#p_cliente').textContent = getVal('#cliente'));
  $('#p_nic') && ($('#p_nic').textContent = getVal('#nic'));
  $('#p_tel') && ($('#p_tel').textContent = getVal('#tel'));
+ $('#p_tecnico') && ($('#p_tecnico').textContent = getVal('#tecnico'));
  $('#p_ciudad') && ($('#p_ciudad').textContent = getVal('#ciudad'));
  $('#p_giro') && ($('#p_giro').textContent = getVal('#giro'));
  $('#p_dir') && ($('#p_dir').textContent = getVal('#dir'));
@@ -903,22 +1992,25 @@ function safePopulatePrintSheet(){
  $('#p_mez_inicial') && ($('#p_mez_inicial').textContent = txt(document.querySelector('[name="mez_inicial"]')?.value ?? ''));
  $('#p_mez_final') && ($('#p_mez_final').textContent = txt(document.querySelector('[name="mez_final"]')?.value ?? ''));
  $('#p_mez_duracion') && ($('#p_mez_duracion').textContent = txt(document.querySelector('[name="mez_duracion"]')?.value ?? ''));
- 
-const info_texto = document.getElementById('info_fixed_form')?.textContent.trim() || '—';
-$('#p_info').textContent = info_texto;
-
+ const infoEl = document.querySelector('[name="info_texto"]');
+ const info_texto = (infoEl?.value?.trim()) || (infoEl?.getAttribute('placeholder') || '—');
+ $('#p_info') && ($('#p_info').textContent = info_texto);
  const evalEl = document.querySelector('input[name="evaluacion"]:checked');
  $('#p_eval') && ($('#p_eval').textContent = txt(evalEl ? evalEl.value : ''));
  // Productos
  try{
- const rows = Array.from(document.querySelectorAll('[data-row]')).slice(0,5).map(r => ({
-  prod : (r.querySelector('input[name="item_prod"]') ?.value ?? '').toString().slice(0,40),
-  cant : (r.querySelector('input[name="item_cant"]') ?.value ?? '').toString().slice(0,6),
-  lts  : (r.querySelector('input[name="item_lts"]')  ?.value ?? '').toString().slice(0,6),
+ 
+  const rows = Array.from(document.querySelectorAll('[data-row]')).slice(0,5).map(r => ({
+  prod  : (r.querySelector('input[name="item_prod"]')   ?.value ?? '').toString().slice(0,40),
+  cant  : (r.querySelector('input[name="item_cant"]')   ?.value ?? '').toString().slice(0,6),
+  lts   : (r.querySelector('input[name="item_lts"]')    ?.value ?? '').toString().slice(0,6),
   metodo: (r.querySelector('select[name="item_metodo"]')?.value ?? '').toString().slice(0,16),
-  dosis : (r.querySelector('input[name="item_dosis"]') ?.value ?? '').toString().slice(0,16),
-  lugar : (r.querySelector('input[name="item_lugar"]') ?.value ?? '').toString().slice(0,22),
- }));
+  dosis : (r.querySelector('input[name="item_dosis"]')  ?.value ?? '').toString().slice(0,16),
+  // 👉 SIN LÍMITE EN PDF:
+  lugar : (r.querySelector('input[name="item_lugar"]')  ?.value ?? '').toString(),
+}));
+``
+
  const tbody = $('#p_items_body');
  if (tbody){
   tbody.innerHTML = '';
@@ -1049,142 +2141,17 @@ const fecha = document.getElementById('fecha'); if (fecha && !fecha.value) fecha
 const saved = localStorage.getItem(STORAGE_KEY);
 if (saved){ try{ setData(JSON.parse(saved)); } catch(e){ addRow(); } }
 if (!itemsBody.children.length) addRow();
-</script>
 
 
-<script>
-/* ============================================================
-   CONVERSIÓN DINÁMICA DE FILAS → TARJETAS SOLO EN MÓVIL
-   ============================================================ */
-
-(function() {
-
-  const LABELS = {
-    item_prod:  'Producto',
-    item_cant:  'Cantidad',
-    item_lts:   'Lts',
-    item_metodo:'Método',
-    item_dosis: 'Dosis',
-    item_lugar: 'Lugar'
-  };
-
-  const isMobile = () => window.matchMedia('(max-width: 820px)').matches;
-
-  /* Aplica modo tarjeta a una fila */
-  function convertRowToCard(row) {
-    if (!row || row.dataset.cardMode === "1") return;
-
-    const fields = [
-      row.querySelector('input[name="item_prod"]'),
-      row.querySelector('input[name="item_cant"]'),
-      row.querySelector('input[name="item_lts"]'),
-      row.querySelector('select[name="item_metodo"]'),
-      row.querySelector('input[name="item_dosis"]'),
-      row.querySelector('input[name="item_lugar"]')
-    ].filter(Boolean);
-
-    const actions = row.querySelector('button[data-act]')?.parentElement;
-
-    /* Insertar etiquetas */
-    fields.forEach(el => {
-      if (!el) return;
-      const name = el.getAttribute("name");
-      if (!name || !LABELS[name]) return;
-
-      const label = document.createElement("div");
-      label.className = "mpr-label";
-      label.textContent = LABELS[name];
-
-      row.insertBefore(label, el);
-    });
-
-    /* Convertir Cant/Lts a texto libre */
-    const cant = row.querySelector('input[name="item_cant"]');
-    const lts  = row.querySelector('input[name="item_lts"]');
-
-    if (cant) {
-      cant.type = "text";
-      cant.placeholder = "Cantidad (ej. 2 pzas)";
-      cant.inputMode = "decimal";
-    }
-    if (lts) {
-      lts.type = "text";
-      lts.placeholder = "Lts (ej. 0.5 lt)";
-      lts.inputMode = "decimal";
-    }
-
-    /* Etiqueta para acciones */
-    if (actions) {
-      const lab = document.createElement("div");
-      lab.className = "mpr-label";
-      lab.textContent = "Acciones";
-      row.insertBefore(lab, actions);
-      actions.classList.add("mpr__actions");
-    }
-
-    row.dataset.cardMode = "1";
-  }
-
-  /* Revertir a modo tabla en escritorio */
-  function revertRowFromCard(row) {
-    if (!row || row.dataset.cardMode !== "1") return;
-
-    /* Eliminar etiquetas */
-    row.querySelectorAll('.mpr-label').forEach(el => el.remove());
-
-    /* Restaurar tipos numéricos */
-    const cant = row.querySelector('input[name="item_cant"]');
-    const lts  = row.querySelector('input[name="item_lts"]');
-
-    if (cant) {
-      cant.type = "number";
-      cant.min = "0";
-      cant.step = "1";
-      cant.removeAttribute("inputmode");
-    }
-    if (lts) {
-      lts.type = "number";
-      lts.min = "0";
-      lts.step = "0.1";
-      lts.removeAttribute("inputmode");
-    }
-
-    const actions = row.querySelector('button[data-act]')?.parentElement;
-    if (actions) actions.classList.remove('mpr__actions');
-
-    delete row.dataset.cardMode;
-  }
-
-  /* Aplica a todas las filas existentes */
-  function updateAllRows() {
-    document.querySelectorAll('[data-row]').forEach(row => {
-      if (isMobile()) convertRowToCard(row);
-      else revertRowFromCard(row);
-    });
-  }
-
-  /* Al cargar */
-  document.addEventListener("DOMContentLoaded", () => {
-    setTimeout(updateAllRows, 50);
+// Asegurar que cada fila tenga clase responsive
+new MutationObserver(() => {
+  document.querySelectorAll('.table__row').forEach(row => {
+    row.classList.add('is-responsive');
   });
+}).observe(document.querySelector('#itemsBody'), { childList: true });
 
-  /* Al cambiar tamaño */
-  window.addEventListener("resize", () => {
-    setTimeout(updateAllRows, 50);
-  });
 
-  /* Parchea addRow para que nuevas filas salgan como tarjetas en móvil */
-  const oldAddRow = window.addRow;
-  window.addRow = function(...args) {
-    oldAddRow.apply(this, args);
-    const rows = document.querySelectorAll('[data-row]');
-    const last = rows[rows.length - 1];
-    if (isMobile()) convertRowToCard(last);
-  };
 
-})();
 </script>
-
-
 </body>
 </html>
