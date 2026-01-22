@@ -1849,8 +1849,8 @@ function addRow(prod='', cant=1, lts=0, metodo='', dosis='', lugar=''){
  row.className = 'table__row'; row.setAttribute('data-row','');
  row.innerHTML = `
  <input type="text" name="item_prod" placeholder="Producto" value="${prod}">
- <input type="number" name="item_cant" min="0" step="1" value="${cant}">
- <input type="number" name="item_lts" min="0" step="0.1" value="${lts}">
+ <input type="number" name="item_cant" min="0" step="1" value="${cant}" placeholder="Cantidad">
+ <input type="number" name="item_lts" min="0" step="0.1" value="${lts}" placeholder="Litros">
  ${methodSelectHTML(metodo)}
  <input type="text" name="item_dosis" placeholder="Dosis" value="${dosis}">
  <input type="text" name="item_lugar" placeholder="Lugar" value="${lugar}">
@@ -2155,3 +2155,4 @@ new MutationObserver(() => {
 </script>
 </body>
 </html>
+
