@@ -1252,7 +1252,6 @@ canvas[data-sig]{ display:block; width:100%; height:auto; }
 #wm{
   opacity: 0.20 !important;   /* opacidad base */
   filter: none !important;
-
   /* 2 capas: una grande + una mediana */
   background-image:
     url('logo.png'),
@@ -1270,8 +1269,12 @@ canvas[data-sig]{ display:block; width:100%; height:auto; }
   }
 }
 
-
 </style>
+
+  <!-- PWA -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#1459ff">
+  
 </head>
 <body>
 <main class="page">
@@ -2150,10 +2153,17 @@ new MutationObserver(() => {
   });
 }).observe(document.querySelector('#itemsBody'), { childList: true });
 
-
-
 </script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(reg => console.log("✅ SW registrado con scope:", reg.scope))
+      .catch(err => console.error("❌ Error registrando SW:", err));
+  });
+}
+</script>
+
 </body>
 </html>
-
-

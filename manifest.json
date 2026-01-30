@@ -1,28 +1,13 @@
-
 {
-  "name": "Constancia ENTOM",
+  "name": "Constancias ENTOM",
   "short_name": "ENTOM",
-  "start_url": "index.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
   "theme_color": "#1459ff",
+  "background_color": "#ffffff",
   "icons": [
-    {
-      "src": "logo.png",
-      "sizes": "180x180",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "logo.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "logo.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
+    { "src": "./logo.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "./logo.png", "sizes": "512x512", "type": "image/png" }
   ]
 }
